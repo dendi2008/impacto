@@ -107,11 +107,11 @@ float OpenALAudioChannel::PositionInSeconds() const {
 void OpenALAudioChannel::Update(float dt) {
   UpdateFade(dt);
 
-  if (State == ACS_Playing || State == ACS_FadingIn || State == ACS_FadingOut) {
-    // Continuously update the gain
-    // because the global state might have changed
-    UpdateGain();
+  // Continuously update the gain
+  // because the global state might have changed
+  UpdateGain();
 
+  if (State == ACS_Playing || State == ACS_FadingIn || State == ACS_FadingOut) {
     ALint processedBuffers;
     alGetSourcei(Source, AL_BUFFERS_PROCESSED, &processedBuffers);
     UnqueueBuffers(processedBuffers);
@@ -175,6 +175,7 @@ void OpenALAudioChannel::UpdateGain() {
   float gain = MasterVolume * GroupVolumes[Group] * Volume;
   switch (State) {
     case ACS_Stopped:
+      alSourcef(Source, AL_GAIN, 0.0f);
       return;
     case ACS_Paused:
     case ACS_Playing:

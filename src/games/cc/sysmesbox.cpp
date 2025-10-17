@@ -7,6 +7,7 @@
 #include "../../profile/scriptvars.h"
 #include "../../mem.h"
 #include "../../renderer/renderer.h"
+#include "../../vm/interface/input.h"
 
 namespace Impacto {
 namespace UI {
@@ -16,6 +17,7 @@ using namespace Impacto::UI::Widgets;
 using namespace Impacto::Profile::ScriptVars;
 using namespace Impacto::Profile::SysMesBox;
 using namespace Impacto::Profile::CC::SysMesBox;
+using namespace Impacto::Vm::Interface;
 
 static float BoxAnimCount = 0.0f;
 
@@ -106,6 +108,16 @@ void SysMesBox::Hide() {
     UI::FocusedMenu = 0;
   }
   IsFocused = false;
+}
+
+void SysMesBox::UpdateInput(float dt) {
+  if (!IsFocused) return;
+  Menu::UpdateInput(dt);
+  if (ChoiceCount == 2) {
+    if (PADinputButtonWentDown & (PAD1LEFT | PAD1RIGHT)) {
+      Audio::Channels[Audio::AC_SSE]->Play("sysse", 1, false, 0);
+    }
+  }
 }
 
 void SysMesBox::Update(float dt) {
